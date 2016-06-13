@@ -1,0 +1,82 @@
+{
+    "variables": {
+        "version": "{{env `version`}}",
+        "http_proxy_schema": "{{env `http_proxy_schema`}}",
+        "http_proxy": "{{env `http_proxy`}}",
+        "http_proxy_port": "{{env `http_proxy_port`}}",
+        "http_proxy_user": "{{env `http_proxy_user`}}",
+        "http_proxy_pass": "{{env `http_proxy_pass`}}",
+        "https_proxy_schema": "{{env `https_proxy_schema`}}",
+        "https_proxy": "{{env `https_proxy`}}",
+        "https_proxy_user": "{{env `https_proxy_user`}}",
+        "https_proxy_pass": "{{env `https_proxy_pass`}}",
+        "ftp_proxy_schema": "{{env `ftp_proxy_schema`}}",
+        "ftp_proxy": "{{env `ftp_proxy`}}",
+        "ftp_proxy_user": "{{env `ftp_proxy_user`}}",
+        "ftp_proxy_pass": "{{env `ftp_proxy_pass`}}",
+        "no_proxy": "{{env `no_proxy`}}",
+        "org": "tompscanlan",
+        "role": "packerd-demo",
+        "docker_repo_username": null,
+        "docker_repo_password": null,
+        "docker_repo_server": null,
+        "docker_repo_email": null
+    },
+    "builders": [
+        {
+            "name": "docker-ubuntu",
+            "type": "docker",
+            "image": "anapsix/alpine-java:jdk8",
+            "commit": true
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+	    "only": ["docker-ubuntu"],
+            "inline": [
+	      "echo 'povisioning!!!'"
+            ],
+            "environment_vars": [
+                "http_proxy={{user `http_proxy_schema`}}://{{user `http_proxy_user`}}:{{user `http_proxy_pass`}}@{{user `http_proxy`}}:{{user `http_proxy_port`}}",
+                "https_proxy={{user `https_proxy_schema`}}://{{user `https_proxy_user`}}:{{user `https_proxy_pass`}}@{{user `https_proxy`}}:{{user `http_proxy_port`}}",
+                "ftp_proxy={{user `ftp_proxy_schema`}}://{{user `ftp_proxy_user`}}:{{user `ftp_proxy_pass`}}@{{user `ftp_proxy`}}:{{user `http_proxy_port`}}",
+                "no_proxy={{user `no_proxy`}}"
+            ]
+        }
+    ],
+    "post-processors": [
+        [
+            {
+                "type": "docker-tag",
+                "repository": "{{user `docker_repo_server`}}/{{user `org`}}/{{user `role`}}",
+                "tag": "{{user `version`}}",
+                "force": true
+            },
+            {
+                "type": "docker-push",
+                "login": true,
+                "login_email": "{{user `docker_repo_email`}}",
+                "login_username": "{{user `docker_repo_username`}}",
+                "login_password": "{{user `docker_repo_password`}}",
+                "login_server": "{{user `docker_repo_server`}}"
+            }
+        ],
+        [
+            {
+                "type": "docker-tag",
+                "repository": "{{user `docker_repo_server`}}/{{user `org`}}/{{user `role`}}",
+                "tag": "latest",
+                "force": true
+            },
+            {
+                "type": "docker-push",
+                "login": true,
+                "login_email": "{{user `docker_repo_email`}}",
+                "login_username": "{{user `docker_repo_username`}}",
+                "login_password": "{{user `docker_repo_password`}}",
+                "login_server": "{{user `docker_repo_server`}}"
+            }
+        ]
+    ]
+}
