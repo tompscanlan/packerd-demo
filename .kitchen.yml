@@ -1,0 +1,23 @@
+---
+driver:
+  name: docker
+
+provisioner:
+  require_chef_for_busser: false
+  name: ansible_playbook
+  ansible_verbose: true
+  ansible_version: latest
+  hosts: localhost
+
+platforms:
+  - name: built
+    driver_config:
+      privileged: true
+      image: tompscanlan/packerd-demo:latest
+      platform: ubuntu
+
+suites:
+  - name: demo
+    driver_config:
+      require_chef_omnibus: false
+      dockerfile: kitchen-dockerfile

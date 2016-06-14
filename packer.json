@@ -35,7 +35,11 @@
             "type": "shell",
 	    "only": ["docker-ubuntu"],
             "inline": [
-	      "echo 'povisioning!!!'"
+	      "echo 'we are in a test_branch now!!!'",
+	      "echo 'we are in a test_branch now!!!'",
+	      "echo 'we are in a test_branch now!!!'",
+	      "echo 'we are in a test_branch now!!!'",
+	      "echo 'we are in a test_branch now!!!'"
             ],
             "environment_vars": [
                 "http_proxy={{user `http_proxy_schema`}}://{{user `http_proxy_user`}}:{{user `http_proxy_pass`}}@{{user `http_proxy`}}:{{user `http_proxy_port`}}",
